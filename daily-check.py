@@ -30,7 +30,8 @@ CHECKIN_SESSION = ""
 BASE_URL = "https://jzsz.uestc.edu.cn"
 API_PATH = "/daily-checkin/api/student-checkin-record/checkin"
 # ==========================================
-CONFIG_FILE = Path(__file__).resolve().parent  / "config.txt"
+CONFIG_FILE = Path(__file__).resolve().parent / "config.txt"
+
 
 def get_mmwebid() -> int:
     """
@@ -51,7 +52,6 @@ def get_mmwebid() -> int:
     number = random.randint(100, 9999)
     CONFIG_FILE.write_text(str(number), encoding="utf-8")
     return number
-    
 
 
 def generate_wechat_miniprogram_ua(appid="wxaa78bf2905f01cee") -> str:
@@ -171,7 +171,7 @@ payload = {
     "userAgent": user_agent,
     # gcj02 是中国独创的地理位置混淆算法(混淆机制未公开), 在国际标准 WGS84 基础上刻意加入非线性偏移量以降低定位精度
     # 腾讯地图用的就是这一套, 固定写死
-    "coordinateSystemCode": "gcj02", 
+    "coordinateSystemCode": "gcj02",
     "accuracy": 30,
     "locationDurationMs": random.randint(300, 1000),  # 定位耗时(ms)
     "networkTypeCode": "wifi",
