@@ -3,15 +3,21 @@ name = "faq-daily-checkin"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-authors = [
-    { name = "kznleaf", email = "kizunaleaf@proton.me" }
-]
+authors = [{ name = "kznleaf", email = "kizunaleaf@proton.me" }]
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "pycryptodome>=4.0.1",
+    "requests>=2.34.2",
+]
 
 [project.scripts]
-faq-daily-checkin = "faq_daily_checkin:main"
+faq-daily-checkin = "faq_daily_checkin.main:main"
 
 [build-system]
 requires = ["uv_build>=0.12.23,<0.13.0"]
 build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
