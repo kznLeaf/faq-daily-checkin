@@ -7,7 +7,6 @@ from zoneinfo import ZoneInfo
 
 import requests
 
-# 服务器地址
 CONFIG_FILE = Path(__file__).resolve().parent / "config.txt"
 
 

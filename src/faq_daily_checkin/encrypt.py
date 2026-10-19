@@ -1,5 +1,10 @@
 """
-encrypt.js 的 python 等价实现
+访问 https://idas.uestc.edu.cn/authserver/login，服务端会马上把源码发给客户端，
+包括 encrypt.js，用于给表单中的密码加密之后再POST.
+
+问题是我刚访问页面你就把加密逻辑扔给我了，那这种加密有什么意义？
+
+本文件是 encrypt.js 的 python 等价实现:
 1. 如果加密密钥 f 为空，直接返回原始密码 n。
 2. 如果密钥不为空，生成一个长度为 64 的随机字符串，拼接在密码前面。
 3. 将密钥和长度为 16 的随机字符串分别作为 AES 密钥和 IV。
@@ -9,6 +14,10 @@ encrypt.js 的 python 等价实现
 
 由于 AES CBC 的特性, 第 N 块密文的原始文本 = 第 N 块解密之后的数据块与 N-1 密文块异或
 所以无需知道 IV 和密码前的随机字符串也可以实现解密.
+
+encrypt_password 用于加密密码，发给登录接口，实现自动化登录.
+需要的 salt 包含在该html页面的隐藏元素中:
+    <input type="hidden" id="pwdEncryptSalt" value="salt">
 """
 
 import base64

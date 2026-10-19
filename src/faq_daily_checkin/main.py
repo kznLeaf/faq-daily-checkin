@@ -2,6 +2,7 @@ import argparse
 import sys
 
 from faq_daily_checkin.checkin import send_checkin_request
+from faq_daily_checkin.login import auto_login
 
 # ==========================================
 # 用户特定的常量
@@ -45,7 +46,30 @@ def main():
         base_url = "http://localhost:8080"
         api_path = "/"
 
-    print(send_checkin_request("123", LATITUDE, LONGITUDE, base_url, api_path))
+    # TODO: 继续封装登录逻辑
+    active_session = auto_login()
+    session_cookie = ""
+    if active_session:
+        print("登录流程全部完成！")
+        print("你可以使用 `active_session.post(...)` 继续发起打卡请求。")
+        print("所有有效的 Cookies:")
+        for cookie in active_session.cookies:
+            if cookie.name == "SESSION":
+                session_cookie = cookie.value
+            print(f"  - {cookie.name}: {cookie.value} (Domain: {cookie.domain})")
+    else:
+        print("登录失败")
+        # TODO: retry several times
+        sys.exit(1)
+
+    if not session_cookie:
+        print("获取 session cookie 失败")
+        sys.exit(1)
+
+    result = send_checkin_request(
+        session_cookie, LATITUDE, LONGITUDE, base_url, api_path
+    )
+    print(result)
 
 
 if __name__ == "__main__":
