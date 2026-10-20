@@ -99,7 +99,6 @@ def auto_login():
         # Step 4: 跟随重定向，换取业务平台的 SESSION
         print("[Step 4] 正在跟随重定向获取 SESSION...")
         session.headers["Referer"] = f"{IDAS_HOST}/"
-        resp_ticket = session.get(location)
 
         # 检查是否成功获取了 jzsz 的 SESSION
         session_cookie = session.cookies.get("SESSION", domain="jzsz.uestc.edu.cn")
@@ -120,11 +119,11 @@ def auto_login():
 
         resp_warmup = session.get(warmup_url)
         if resp_warmup.status_code == 200:
-            print("✅ 门户预热成功！当前 Session 已完全激活，可用于后续打卡接口。")
+            print("✅ 成功激活会话！")
             # 此时 session 对象中已包含所有有效的 Cookie，可以直接用于后续的 POST 打卡请求
             return session
         else:
-            print(f"❌ 门户预热失败，状态码: {resp_warmup.status_code}")
+            print(f"❌ 激活会话失败: {resp_warmup.status_code}")
             return False
 
     else:

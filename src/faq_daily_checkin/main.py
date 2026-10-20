@@ -9,10 +9,6 @@ from faq_daily_checkin.login import auto_login
 # 一个有效打卡位置的经纬度坐标, 每个人的有效打卡范围不同, 自己测定. 保留 6 位小数.
 LATITUDE = 0.0
 LONGITUDE = 0.0
-# session cookie, 在 PC 端打开 F12 登录 https://jzsz.uestc.edu.cn
-# 然后在 Cookie 选项卡中就能看到.
-# session cookie 安全性极差, 重放 cookie 即可通过身份验证.
-CHECKIN_SESSION = ""
 # ==========================================
 
 
@@ -36,10 +32,6 @@ def main():
     args = parse_args()
     base_url = "https://jzsz.uestc.edu.cn"
     api_path = "/daily-checkin/api/student-checkin-record/checkin"
-
-    if not args.session or not args.session.strip():
-        print("Error: 缺少session cookie")
-        sys.exit(1)
 
     if args.debug:
         print("Debug Mode Enabled")
@@ -66,6 +58,7 @@ def main():
         print("获取 session cookie 失败")
         sys.exit(1)
 
+    print("开始发送打卡请求...")
     result = send_checkin_request(
         session_cookie, LATITUDE, LONGITUDE, base_url, api_path
     )
