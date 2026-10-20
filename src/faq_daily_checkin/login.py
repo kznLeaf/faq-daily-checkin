@@ -29,7 +29,7 @@ def get_random_string(length: int) -> str:
 
 def auto_login():
     if not STUDENT_ID or not PASSWORD or not BROWSER_FINGERPRINT:
-        print("学号/密码/浏览器指纹不完整, 退出程序.")
+        print("学号/密码/浏览器指纹缺失, 退出程序.")
         return False
     # 使用 Session 自动管理 Cookie (JSESSIONID, CASTGC, SESSION 等)
     session = requests.Session()
@@ -60,16 +60,14 @@ def auto_login():
     salt = salt_match.group(1)
     print(f"✅ 获取成功: execution={execution}, salt={salt}")
 
-    print("[Step 2] 正在上报浏览器指纹 (绕过二次验证)...")
-    bfp_url = f"{IDAS_HOST}/authserver/bfp/info?bfp={BROWSER_FINGERPRINT}&_={int(time.time() * 1000)}"
-    session.headers["X-Requested-With"] = "XMLHttpRequest"
-    resp_bfp = session.get(bfp_url)
-    if resp_bfp.status_code == 200:
-        print("✅ 指纹上报成功，已建立可信设备标记。")
-    else:
-        print(f"⚠️ 指纹上报返回状态码: {resp_bfp.status_code} (继续尝试登录)")
-    # 恢复默认 Accept header
-    session.headers.pop("X-Requested-With", None)
+    print("[Step 2] 设置浏览器指纹")
+    # 只有访问 idas 登录的时候才需要携带 MULTIFACTOR_BROWSER_FINGERPRINT
+    session.cookies.set(
+        name="MULTIFACTOR_BROWSER_FINGERPRINT",
+        value=BROWSER_FINGERPRINT,
+        domain="idas.uestc.edu.cn",
+        path="/",
+    )
 
     print("[Step 3] 正在加密密码并提交登录...")
     encrypted_pwd = encrypt_password(PASSWORD, salt)
