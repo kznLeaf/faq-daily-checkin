@@ -161,13 +161,13 @@ def send_checkin_request(
         if res_json.get("code") == 0 and res_json.get("ok"):
             return {
                 "success": True,
-                "message": res_json.get("msg", "✅打卡成功"),
+                "message": res_json.get("msg", "打卡成功"),
                 "raw_response": res_json,
             }
         else:
             return {
                 "success": False,
-                "message": res_json.get("msg", "⚠️未完成打卡"),
+                "message": res_json.get("msg", "未完成打卡"),
                 "raw_response": res_json,
             }
 
