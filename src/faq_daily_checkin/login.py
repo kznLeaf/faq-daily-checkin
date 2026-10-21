@@ -1,11 +1,13 @@
 import os
 import random
 import re
+import sys
 import time
 
 import requests
 
 from faq_daily_checkin.encrypt import encrypt_password
+from faq_daily_checkin.utils import print_error
 
 # ==========================================
 # 从环境变量从提取
@@ -48,7 +50,7 @@ def auto_login():
         }
     )
 
-    print("[Step 1] 正在获取登录页动态参数...")
+    print("[1/4] 获取登录页动态参数")
     login_url = f"{IDAS_HOST}/authserver/login?service={JZSZ_HOST}/"
     resp = session.get(login_url)
     resp.raise_for_status()
@@ -58,12 +60,12 @@ def auto_login():
     salt_match = re.search(r'id="pwdEncryptSalt"\s+value="([^"]+)"', resp.text)
 
     if not exec_match or not salt_match:
-        print("无法从登录页提取 execution 或 pwdEncryptSalt")
+        print_error("无法从登录页提取 execution 或 pwdEncryptSalt")
         return False
 
     execution = exec_match.group(1)
     salt = salt_match.group(1)
-    print(f"获取成功: execution={execution}, salt={salt}")
+    print(f"成功获取 execution={execution}, salt={salt}")
 
     # 只有访问 idas 登录的时候才需要携带 MULTIFACTOR_BROWSER_FINGERPRINT
     session.cookies.set(
@@ -73,7 +75,7 @@ def auto_login():
         path="/",
     )
 
-    print("[Step 2] 正在加密密码并提交登录...")
+    print("[2/4] 正在加密密码并提交登录...")
     encrypted_pwd = encrypt_password(PASSWORD, salt)
 
     login_data = {
@@ -99,18 +101,25 @@ def auto_login():
         print(f"登录成功，获得重定向 Ticket: {location}")
 
         # 跟随重定向，换取业务平台的 SESSION
-        print("[Step 3] 正在跟随重定向获取 SESSION...")
+        print("[3/4] 正在跟随重定向获取 SESSION...")
         session.headers["Referer"] = f"{IDAS_HOST}/"
+
+        # 必须向重定向指向的目标 URL 发送一次请求，
+        # 否则下一步可能拿不到SESSION
+        session.get(location)
 
         # 检查是否成功获取了 jzsz 的 SESSION
         session_cookie = session.cookies.get("SESSION", domain="jzsz.uestc.edu.cn")
         if session_cookie:
             print(f"成功获取业务 SESSION: {session_cookie}")
         else:
-            print("[Warning] 未检测到 SESSION Cookie")
+            print_error("未检测到 SESSION Cookie. 完整cookie列表:")
+            for cookie in session.cookies:
+                print(f"  - {cookie.name}: {cookie.value} (Domain: {cookie.domain})")
+            sys.exit(1)
 
         # 真实用户通过浏览器访问 jzsz 时会先向 /api/isLoginFailure 发送请求
-        print("[Step 4] /api/isLoginFailure")
+        print("[4/4] 激活 session cookie")
         warmup_url = f"{JZSZ_HOST}/api/isLoginFailure?_t={int(time.time() * 1000)}"
         session.headers["Accept"] = "application/json, text/plain, */*"
         session.headers["Content-Type"] = "application/json;charset=UTF-8"
@@ -121,14 +130,13 @@ def auto_login():
 
         resp_warmup = session.get(warmup_url)
         if resp_warmup.status_code == 200:
-            print("成功激活会话！")
+            print("成功激活！")
             # 此时 session 对象中已包含所有有效的 Cookie，可以直接用于后续的 POST 打卡请求
             return session
         else:
-            print(f"[Error] 激活会话失败: {resp_warmup.status_code}")
+            print_error(f"激活失败: {resp_warmup.status_code}")
             return False
 
     else:
-        print(f"[Error] 登录提交失败，状态码: {resp_submit.status_code}")
-        print("响应内容片段:", resp_submit.text[:200])
+        print_error(f"登录失败，响应如下：\n{resp_submit.text}")
         return False
