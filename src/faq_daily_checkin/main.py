@@ -1,4 +1,5 @@
 import argparse
+import os
 import sys
 
 from faq_daily_checkin.checkin import send_checkin_request
@@ -8,16 +9,15 @@ from faq_daily_checkin.utils import print_error, print_success
 # ==========================================
 # 用户特定的常量
 # 一个有效打卡位置的经纬度坐标, 每个人的有效打卡范围不同, 自己测定. 保留 6 位小数.
-LATITUDE = 0.0
-LONGITUDE = 0.0
+LATITUDE = float(os.environ.get("LATITUDE", "0"))
+LONGITUDE = float(os.environ.get("LONGITUDE", "0"))
+BASE_URL = "https://jzsz.uestc.edu.cn"
+API_PATH = "/daily-checkin/api/student-checkin-record/checkin"
 # ==========================================
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description="F U UESTC")
-    parser.add_argument(
-        "--debug", action="store_true", help="Enable debug mode. Test only."
-    )
     parser.add_argument(
         "-s",
         "--session",
@@ -31,13 +31,6 @@ def parse_args():
 
 def main():
     args = parse_args()
-    base_url = "https://jzsz.uestc.edu.cn"
-    api_path = "/daily-checkin/api/student-checkin-record/checkin"
-
-    if args.debug:
-        print("Debug Mode Enabled")
-        base_url = "http://localhost:8080"
-        api_path = "/"
 
     print("开始登录获取session...")
     active_session = auto_login()
@@ -57,7 +50,7 @@ def main():
 
     print("开始打卡")
     result = send_checkin_request(
-        session_cookie, LATITUDE, LONGITUDE, base_url, api_path
+        session_cookie, LATITUDE, LONGITUDE, BASE_URL, API_PATH
     )
     if result["success"] is True:
         print_success("打卡成功")

@@ -7,7 +7,7 @@ from zoneinfo import ZoneInfo
 
 import requests
 
-CONFIG_FILE = Path(__file__).resolve().parent / "config.txt"
+CONFIG_FILE = Path(__file__).resolve().parent / "config.yaml"
 
 
 def _get_mmwebid() -> int:
@@ -16,7 +16,7 @@ def _get_mmwebid() -> int:
     由客户端生成, 与客户端实例长期绑定, 极少发生变化,
     不管是公众号还是小程序, User-Agent 带有同一个 MMWEBID.
     这里采用的方式是仅在第一次运行时随机产生一个ID, 后续每次复用.
-    如果你知道自己的 MMWEBID, 建议手动修改config.txt
+    如果你知道自己的 MMWEBID, 建议手动修改config.yaml
     """
     if CONFIG_FILE.exists():
         try:

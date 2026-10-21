@@ -7,6 +7,7 @@ authors = [{ name = "kznleaf", email = "kizunaleaf@proton.me" }]
 requires-python = ">=3.13"
 dependencies = [
     "pycryptodome>=4.0.1",
+    "pyyaml>=6.0.3",
     "requests>=2.34.2",
 ]
 

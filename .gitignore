@@ -12,3 +12,5 @@ wheels/
 .DS_Store
 leak/
 .envrc
+
+config.yaml
