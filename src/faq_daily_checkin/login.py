@@ -17,7 +17,7 @@ BROWSER_FINGERPRINT = get_config("browser_fingerprint", "")
 # ==========================================
 IDAS_HOST = "https://idas.uestc.edu.cn"
 JZSZ_HOST = "https://jzsz.uestc.edu.cn"
-# User-Agent 登录使用的 UA 来自于真实请求，不能随便乱取，
+# User-Agent 登录使用的 UA 不能随便乱取，
 # 否则在第 1 步就会失败。疑似存在校验机制
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:153.0) Gecko/20100101 Firefox/153.0"
 # ==========================================
