@@ -23,6 +23,7 @@ def _get_mmwebid() -> int:
         return random.randint(100, 9999)
     return id
 
+
 def _generate_wechat_miniprogram_ua(appid="wxaa78bf2905f01cee") -> str:
     """
     产生 HTTP 请求头的 User-Agent 字段.

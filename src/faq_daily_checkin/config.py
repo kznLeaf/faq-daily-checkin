@@ -13,7 +13,14 @@ try:
     with open(CONFIG_PATH, "r", encoding="utf-8") as f:
         CONFIG = yaml.safe_load(f)
 except FileNotFoundError:
-    raise RuntimeError(f"找不到配置文件 {CONFIG_PATH}")
+    if EXAMPLE_CONFIG_PATH.is_file():
+        error_msg = (
+            f" 找不到配置文件: {CONFIG_PATH}\n"
+            f" 尝试将 config.yaml.example 重命名为config.yaml\n"
+        )
+        raise RuntimeError(error_msg)
+    else:
+        raise RuntimeError(f"找不到配置文件 {CONFIG_PATH}")
 except yaml.YAMLError as e:
     raise RuntimeError(f"YAML 解析失败\n{e}")
 
