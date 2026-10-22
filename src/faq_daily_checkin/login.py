@@ -98,10 +98,10 @@ def auto_login():
 
     if resp_submit.status_code == 302:
         location = resp_submit.headers.get("Location", "")
-        print(f"登录成功，获得重定向 Ticket: {location}")
+        print(f"登录成功，获得重定向URL: {location}")
 
         # 跟随重定向，换取业务平台的 SESSION
-        print("[3/4] 正在跟随重定向获取 SESSION...")
+        print("[3/4] 正在跟随重定向获取SESSION...")
         session.headers["Referer"] = f"{IDAS_HOST}/"
 
         # 必须向重定向指向的目标 URL 发送一次请求，
@@ -111,9 +111,9 @@ def auto_login():
         # 检查是否成功获取了 jzsz 的 SESSION
         session_cookie = session.cookies.get("SESSION", domain="jzsz.uestc.edu.cn")
         if session_cookie:
-            print(f"成功获取业务 SESSION: {session_cookie}")
+            print(f"成功获取业务SESSION: {session_cookie}")
         else:
-            print_error("未检测到 SESSION Cookie. 完整cookie列表:")
+            print_error("未检测到SESSION Cookie. 完整cookie列表:")
             for cookie in session.cookies:
                 print(f"  - {cookie.name}: {cookie.value} (Domain: {cookie.domain})")
             sys.exit(1)

@@ -12,6 +12,7 @@ EXAMPLE_CONFIG_PATH = get_project_root() / "config.yaml.example"
 try:
     with open(CONFIG_PATH, "r", encoding="utf-8") as f:
         CONFIG = yaml.safe_load(f)
+        # TODO: Validate
 except FileNotFoundError:
     if EXAMPLE_CONFIG_PATH.is_file():
         error_msg = (

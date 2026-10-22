@@ -28,7 +28,7 @@ def parse_args():
     # TODO: 完善命令行参数的解析
     mode_group = parser.add_mutually_exclusive_group()
     mode_group.add_argument(
-        "--now", action="store_true", help="立即尝试打卡. 默认行为."
+        "--now", action="store_true", help="默认行为, 立即尝试打卡."
     )
 
     mode_group.add_argument(
