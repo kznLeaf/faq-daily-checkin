@@ -1,0 +1,10 @@
+student_id: "123456"
+password: "123456"
+browser_fingerprint: "ABCDEFG"
+position:
+  latitude: 12.123456
+  longitude: 123.123456
+time:
+  start: "21:00"
+  end: "22:30"
+mmwebid: 578

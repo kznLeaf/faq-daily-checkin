@@ -6,7 +6,8 @@ import yaml
 
 from faq_daily_checkin.utils import get_project_root
 
-CONFIG_PATH = get_project_root()
+CONFIG_PATH = get_project_root() / "config.yaml"
+EXAMPLE_CONFIG_PATH = get_project_root() / "config.yaml.example"
 
 try:
     with open(CONFIG_PATH, "r", encoding="utf-8") as f:
