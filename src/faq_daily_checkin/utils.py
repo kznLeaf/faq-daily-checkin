@@ -1,3 +1,6 @@
+from pathlib import Path
+
+
 # TODO: 参考 https://github.com/mitmproxy/mitmproxy/blob/main/mitmproxy/log.py
 # 完善日志系统
 def print_success(msg):
@@ -10,3 +13,7 @@ def print_warning(msg):
 
 def print_error(msg):
     print(f"\033[31m{msg}\033[0m")
+
+
+def get_project_root() -> Path:
+    return Path(__file__).parent.parent.parent

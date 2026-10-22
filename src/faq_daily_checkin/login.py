@@ -1,4 +1,3 @@
-import os
 import random
 import re
 import sys
@@ -6,21 +5,20 @@ import time
 
 import requests
 
+from faq_daily_checkin.config import get_config
 from faq_daily_checkin.encrypt import encrypt_password
 from faq_daily_checkin.utils import print_error
 
 # ==========================================
-# 从环境变量从提取
-STUDENT_ID = os.environ.get("STUDENT_ID", "")
-PASSWORD = os.environ.get("PASSWORD", "")
+STUDENT_ID = get_config("student_id", "")
+PASSWORD = get_config("password", "")
 # 打开 F12，从 idas.uestc.edu.cn 的 Cookie 中复制 MULTIFACTOR_BROWSER_FINGERPRINT 的值
-BROWSER_FINGERPRINT = os.environ.get("BROWSER_FINGERPRINT", "")
+BROWSER_FINGERPRINT = get_config("browser_fingerprint", "")
 # ==========================================
 IDAS_HOST = "https://idas.uestc.edu.cn"
 JZSZ_HOST = "https://jzsz.uestc.edu.cn"
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:153.0) Gecko/20100101 Firefox/153.0"
 # ==========================================
-# 固定字符集 (与前端 encrypt.js 保持一致)
 CHARSET = "ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678"
 
 

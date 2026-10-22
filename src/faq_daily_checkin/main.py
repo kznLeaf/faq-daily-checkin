@@ -1,19 +1,18 @@
 import argparse
-import os
 import sys
 
 from faq_daily_checkin.checkin import send_checkin_request
+from faq_daily_checkin.config import get_config
 from faq_daily_checkin.login import auto_login
 from faq_daily_checkin.utils import print_error, print_success
 
-# ==========================================
-# 用户特定的常量
-# 一个有效打卡位置的经纬度坐标, 每个人的有效打卡范围不同, 自己测定. 保留 6 位小数.
-LATITUDE = float(os.environ.get("LATITUDE", "0"))
-LONGITUDE = float(os.environ.get("LONGITUDE", "0"))
+LATITUDE = get_config("position.latitude", 0.0)
+LONGITUDE = get_config("position.longitude", 0.0)
+TIME_START = get_config("time.start", "")
+TIME_END = get_config("time.end", "")
+
 BASE_URL = "https://jzsz.uestc.edu.cn"
 API_PATH = "/daily-checkin/api/student-checkin-record/checkin"
-# ==========================================
 
 
 def parse_args():

@@ -1,13 +1,12 @@
 import random
 import uuid
 from datetime import datetime
-from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 
 import requests
 
-CONFIG_FILE = Path(__file__).resolve().parent / "config.yaml"
+from faq_daily_checkin.config import get_config
 
 
 def _get_mmwebid() -> int:
@@ -15,21 +14,14 @@ def _get_mmwebid() -> int:
     MMWEBID 是微信内置 WebView 组件实例 ID. 格式为三位或四位数字.
     由客户端生成, 与客户端实例长期绑定, 极少发生变化,
     不管是公众号还是小程序, User-Agent 带有同一个 MMWEBID.
-    这里采用的方式是仅在第一次运行时随机产生一个ID, 后续每次复用.
     如果你知道自己的 MMWEBID, 建议手动修改config.yaml
+    不过这玩意本来也没那么重要, 随便编一个数字就行了
     """
-    if CONFIG_FILE.exists():
-        try:
-            number = int(CONFIG_FILE.read_text(encoding="utf-8").strip())
-            if 100 <= number <= 9999:
-                return number
-        except (ValueError, OSError):
-            pass
 
-    number = random.randint(100, 9999)
-    CONFIG_FILE.write_text(str(number), encoding="utf-8")
-    return number
-
+    id = get_config("mmwebid", 0)
+    if id == 0:
+        return random.randint(100, 9999)
+    return id
 
 def _generate_wechat_miniprogram_ua(appid="wxaa78bf2905f01cee") -> str:
     """
