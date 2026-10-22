@@ -24,7 +24,7 @@ def _get_mmwebid() -> int:
     return id
 
 
-def _generate_wechat_miniprogram_ua(appid="wxaa78bf2905f01cee") -> str:
+def generate_wechat_miniprogram_ua(appid="wxaa78bf2905f01cee") -> str:
     """
     产生 HTTP 请求头的 User-Agent 字段.
     User-Agent 非常稳定, 基本保持不变
@@ -97,7 +97,7 @@ def send_checkin_request(
     # e.g. 2026-10-17 14:35:12
     now = datetime.now(ZoneInfo("Asia/Shanghai"))
     client_time = now.strftime("%Y-%m-%d %H:%M:%S")
-    user_agent = _generate_wechat_miniprogram_ua()
+    user_agent = generate_wechat_miniprogram_ua()
 
     session_id = str(uuid.uuid4())
 

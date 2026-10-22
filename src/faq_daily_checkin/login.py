@@ -5,6 +5,7 @@ import time
 
 import requests
 
+from faq_daily_checkin.checkin import generate_wechat_miniprogram_ua
 from faq_daily_checkin.config import get_config
 from faq_daily_checkin.encrypt import encrypt_password
 from faq_daily_checkin.utils import print_error
@@ -17,7 +18,7 @@ BROWSER_FINGERPRINT = get_config("browser_fingerprint", "")
 # ==========================================
 IDAS_HOST = "https://idas.uestc.edu.cn"
 JZSZ_HOST = "https://jzsz.uestc.edu.cn"
-USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:153.0) Gecko/20100101 Firefox/153.0"
+USER_AGENT = generate_wechat_miniprogram_ua()
 # ==========================================
 CHARSET = "ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678"
 
