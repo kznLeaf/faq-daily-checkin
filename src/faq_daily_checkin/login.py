@@ -1,4 +1,3 @@
-import os
 import random
 import re
 import sys
@@ -6,21 +5,22 @@ import time
 
 import requests
 
+from faq_daily_checkin.config import get_config
 from faq_daily_checkin.encrypt import encrypt_password
 from faq_daily_checkin.utils import print_error
 
 # ==========================================
-# 从环境变量从提取
-STUDENT_ID = os.environ.get("STUDENT_ID", "")
-PASSWORD = os.environ.get("PASSWORD", "")
+STUDENT_ID = get_config("student_id", "")
+PASSWORD = get_config("password", "")
 # 打开 F12，从 idas.uestc.edu.cn 的 Cookie 中复制 MULTIFACTOR_BROWSER_FINGERPRINT 的值
-BROWSER_FINGERPRINT = os.environ.get("BROWSER_FINGERPRINT", "")
+BROWSER_FINGERPRINT = get_config("browser_fingerprint", "")
 # ==========================================
 IDAS_HOST = "https://idas.uestc.edu.cn"
 JZSZ_HOST = "https://jzsz.uestc.edu.cn"
+# User-Agent 登录使用的 UA 不能随便乱取，
+# 否则在第 1 步就会失败。疑似存在校验机制
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:153.0) Gecko/20100101 Firefox/153.0"
 # ==========================================
-# 固定字符集 (与前端 encrypt.js 保持一致)
 CHARSET = "ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678"
 
 
@@ -98,10 +98,10 @@ def auto_login():
 
     if resp_submit.status_code == 302:
         location = resp_submit.headers.get("Location", "")
-        print(f"登录成功，获得重定向 Ticket: {location}")
+        print(f"登录成功，获得重定向URL: {location}")
 
         # 跟随重定向，换取业务平台的 SESSION
-        print("[3/4] 正在跟随重定向获取 SESSION...")
+        print("[3/4] 正在跟随重定向获取SESSION...")
         session.headers["Referer"] = f"{IDAS_HOST}/"
 
         # 必须向重定向指向的目标 URL 发送一次请求，
@@ -111,9 +111,9 @@ def auto_login():
         # 检查是否成功获取了 jzsz 的 SESSION
         session_cookie = session.cookies.get("SESSION", domain="jzsz.uestc.edu.cn")
         if session_cookie:
-            print(f"成功获取业务 SESSION: {session_cookie}")
+            print(f"成功获取业务SESSION: {session_cookie}")
         else:
-            print_error("未检测到 SESSION Cookie. 完整cookie列表:")
+            print_error("未检测到SESSION Cookie. 完整cookie列表:")
             for cookie in session.cookies:
                 print(f"  - {cookie.name}: {cookie.value} (Domain: {cookie.domain})")
             sys.exit(1)
@@ -140,3 +140,17 @@ def auto_login():
     else:
         print_error(f"登录失败，响应如下：\n{resp_submit.text}")
         return False
+
+
+def get_session_cookie():
+    active_session = auto_login()
+    if active_session:
+        print("登录流程全部完成！")
+        for cookie in active_session.cookies:
+            if cookie.name == "SESSION":
+                session_cookie = cookie.value
+                print("Session Cookie:", session_cookie)
+                return session_cookie
+    else:
+        # TODO: errror handling. exit
+        sys.exit(1)
