@@ -3,7 +3,7 @@ import sys
 
 from faq_daily_checkin.checkin import send_checkin_request
 from faq_daily_checkin.config import get_config
-from faq_daily_checkin.login import auto_login
+from faq_daily_checkin.login import get_session_cookie
 from faq_daily_checkin.utils import print_error, print_success
 
 LATITUDE = get_config("position.latitude", 0.0)
@@ -48,22 +48,11 @@ def parse_args():
 
 def main():
     args = parse_args()
-    session_cookie = args.session
-    if not args.session:
-        print("开始登录获取session...")
-        active_session = auto_login()
-        if active_session:
-            print_success("登录流程全部完成！")
-            for cookie in active_session.cookies:
-                if cookie.name == "SESSION":
-                    session_cookie = cookie.value
-        else:
-            print_error("登录失败")
-            sys.exit(1)
 
-        if not session_cookie:
-            print_error("获取 session cookie 失败")
-            sys.exit(1)
+    session_cookie = get_session_cookie()
+    if not session_cookie:
+       print_error("获取 session cookie 失败")
+       sys.exit(1)
 
     print("开始打卡")
     result = send_checkin_request(
