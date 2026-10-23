@@ -141,6 +141,7 @@ def auto_login():
         print_error(f"登录失败，响应如下：\n{resp_submit.text}")
         return False
 
+
 def get_session_cookie():
     active_session = auto_login()
     if active_session:
@@ -153,4 +154,3 @@ def get_session_cookie():
     else:
         # TODO: errror handling. exit
         sys.exit(1)
-    
